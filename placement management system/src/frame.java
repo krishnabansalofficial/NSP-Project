@@ -126,6 +126,8 @@ public class frame {
 
         JToggleButton btnShowPwd = new JToggleButton("\uD83D\uDC41"); // Eye emoji
         btnShowPwd.setBounds(585, 185, 45, 36);
+        btnShowPwd.setMargin(new Insets(0, 0, 0, 0));
+        btnShowPwd.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 16));
         btnShowPwd.setFocusPainted(false);
         btnShowPwd.setContentAreaFilled(false);
         btnShowPwd.setBorderPainted(false);

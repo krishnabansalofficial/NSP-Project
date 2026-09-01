@@ -5,6 +5,7 @@ import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -221,6 +222,8 @@ public class Dashboard {
         studentTableModel = new DefaultTableModel(null, studentCols) {
             @Override public boolean isCellEditable(int row, int col) { return col == 5; } // Actions column is editable
         };
+        loadTableData(studentTableModel, "students_data.txt");
+        studentCount = studentTableModel.getRowCount();
         studentTable = new JTable(studentTableModel);
         studentTable.setRowHeight(45); // Increased for multi-line support
         studentTable.setShowGrid(true);
@@ -298,6 +301,8 @@ public class Dashboard {
         driveTableModel = new DefaultTableModel(null, driveColumns) {
             @Override public boolean isCellEditable(int r, int c) { return c == 7; } // Actions column is editable
         };
+        loadTableData(driveTableModel, "companies_data.txt");
+        companyCount = driveTableModel.getRowCount();
         driveTable = new JTable(driveTableModel);
         driveTable.setRowHeight(45); // Increased for multi-line support
         driveTable.setShowGrid(true);
@@ -359,6 +364,8 @@ public class Dashboard {
         noticeTableModel = new DefaultTableModel(null, noticeCols) {
             @Override public boolean isCellEditable(int row, int col) { return col == 3; }
         };
+        loadTableData(noticeTableModel, "notices_data.txt");
+        noticeCount = noticeTableModel.getRowCount();
         noticeTable = new JTable(noticeTableModel);
         noticeTable.setRowHeight(70); // Increased height to show multiple lines for big notices
         noticeTable.setShowGrid(true);
@@ -849,12 +856,14 @@ public class Dashboard {
                     roll, name, cbBranch.getSelectedItem().toString(), 
                     cgpaStr, "Applied", ""
                 });
+                saveTableData(studentTableModel, "students_data.txt");
                 JOptionPane.showMessageDialog(dialog, "Student '" + name + "' has been successfully added!");
             } else {
                 studentTableModel.setValueAt(roll, editRow, 0);
                 studentTableModel.setValueAt(name, editRow, 1);
                 studentTableModel.setValueAt(cbBranch.getSelectedItem().toString(), editRow, 2);
                 studentTableModel.setValueAt(cgpaStr, editRow, 3);
+                saveTableData(studentTableModel, "students_data.txt");
                 JOptionPane.showMessageDialog(dialog, "Student '" + name + "' has been successfully updated!");
             }
             studentTable.clearSelection();
@@ -1061,6 +1070,7 @@ public class Dashboard {
             } else {
                 noticeTableModel.setValueAt(dateStr, editRow, 1);
                 noticeTableModel.setValueAt(detailsStr, editRow, 2);
+                saveTableData(noticeTableModel, "notices_data.txt");
                 JOptionPane.showMessageDialog(dialog, "Notice updated successfully!");
             }
             noticeTable.clearSelection();
@@ -1087,12 +1097,51 @@ public class Dashboard {
         int choice = JOptionPane.showConfirmDialog(dashFrame, "Are you sure you want to delete notice " + noticeId + "?", "Delete Confirm", JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
             noticeTableModel.removeRow(row);
+            saveTableData(noticeTableModel, "notices_data.txt");
             JOptionPane.showMessageDialog(dashFrame, "Notice deleted successfully!");
         }
     }
 
     // Main method for testing directly
     // Main method for testing directly
+    private void saveTableData(DefaultTableModel model, String filename) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
+            for (int i = 0; i < model.getRowCount(); i++) {
+                StringBuilder rowStr = new StringBuilder();
+                for (int j = 0; j < model.getColumnCount() - 1; j++) {
+                    rowStr.append(model.getValueAt(i, j).toString());
+                    if (j < model.getColumnCount() - 2) {
+                        rowStr.append("||");
+                    }
+                }
+                bw.write(rowStr.toString());
+                bw.newLine();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void loadTableData(DefaultTableModel model, String filename) {
+        File file = new File(filename);
+        if (!file.exists()) return;
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) continue;
+                String[] data = line.split("\\|\\|");
+                Object[] rowData = new Object[model.getColumnCount()];
+                for (int i = 0; i < data.length; i++) {
+                    rowData[i] = data[i];
+                }
+                rowData[model.getColumnCount() - 1] = ""; // Actions column
+                model.addRow(rowData);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         new Dashboard();
     }
