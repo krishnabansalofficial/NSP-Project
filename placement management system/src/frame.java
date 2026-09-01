@@ -1,9 +1,38 @@
 import javax.swing.*;
-
 import java.awt.*;
+import java.io.*;
 
 // Placement Management System - Main UI Frame
 public class frame {
+
+    private static final String PWD_FILE = "admin_pwd.txt";
+
+    public static String getPassword() {
+        try {
+            File f = new File(PWD_FILE);
+            if (f.exists()) {
+                BufferedReader br = new BufferedReader(new FileReader(f));
+                String pwd = br.readLine();
+                br.close();
+                if (pwd != null && !pwd.trim().isEmpty()) {
+                    return pwd.trim();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "admin"; // default
+    }
+
+    public static void updatePassword(String newPwd) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(PWD_FILE));
+            bw.write(newPwd);
+            bw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
 
@@ -95,6 +124,25 @@ public class frame {
         txtPassword.setBackground(new Color(255, 255, 255, 240));
         loginCard.add(txtPassword);
 
+        JToggleButton btnShowPwd = new JToggleButton("\uD83D\uDC41"); // Eye emoji
+        btnShowPwd.setBounds(585, 185, 45, 36);
+        btnShowPwd.setFocusPainted(false);
+        btnShowPwd.setContentAreaFilled(false);
+        btnShowPwd.setBorderPainted(false);
+        btnShowPwd.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        char defaultEcho = txtPassword.getEchoChar();
+        btnShowPwd.addActionListener(e -> {
+            if (btnShowPwd.isSelected()) {
+                txtPassword.setEchoChar((char) 0);
+                btnShowPwd.setText("\u2716"); // Cross symbol
+            } else {
+                txtPassword.setEchoChar(defaultEcho);
+                btnShowPwd.setText("\uD83D\uDC41"); // Eye emoji
+            }
+        });
+        loginCard.add(btnShowPwd);
+
         // Login Button
         JButton btnLogin = new RoundedButton("LOGIN", 20);
         btnLogin.setBackground(new Color(0, 153, 76)); // Green color
@@ -111,10 +159,12 @@ public class frame {
 
             if (emailVal.isEmpty() || passVal.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "Please enter Email and Password!", "Login Alert", JOptionPane.WARNING_MESSAGE);
-            } else {
+            } else if (emailVal.equals("college@poornima.org") && passVal.equals(getPassword())) {
                 // Bina kisi delay/popup ke direct Dashboard open hoga
                 new Dashboard();
                 frame.dispose(); // Purana frame close
+            } else {
+                JOptionPane.showMessageDialog(frame, "Invalid Email or Password!", "Login Failed", JOptionPane.ERROR_MESSAGE);
             }
         });
 

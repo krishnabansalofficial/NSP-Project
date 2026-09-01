@@ -25,6 +25,7 @@ public class Dashboard {
     private JTable noticeTable;
     private JPanel topNav;
     private JLabel lblTotalStudents, lblTotalCompanies, lblTotalPlaced;
+    private JLabel lblProfileTotalStudents, lblProfileTotalCompanies, lblProfileTotalNotices;
     private int studentCount = 0;
     private int companyCount = 0;
     private int noticeCount = 0;
@@ -131,6 +132,11 @@ public class Dashboard {
         });
         btnProfile.addActionListener(e -> {
             topNav.setVisible(false);
+            if (lblProfileTotalStudents != null) {
+                lblProfileTotalStudents.setText(String.valueOf(studentTableModel.getRowCount()));
+                lblProfileTotalCompanies.setText(String.valueOf(driveTableModel.getRowCount()));
+                lblProfileTotalNotices.setText(String.valueOf(noticeTableModel.getRowCount()));
+            }
             cardLayout.show(cardPanel, "Profile");
             setActiveTab.accept(btnProfile);
         });
@@ -217,8 +223,8 @@ public class Dashboard {
         };
         studentTable = new JTable(studentTableModel);
         studentTable.setRowHeight(45); // Increased for multi-line support
-        studentTable.setShowVerticalLines(false);
-        studentTable.setIntercellSpacing(new Dimension(0, 0));
+        studentTable.setShowGrid(true);
+        studentTable.setGridColor(new Color(220, 220, 220));
         studentTable.setFillsViewportHeight(true);
         studentTable.setBackground(Color.WHITE);
 
@@ -294,8 +300,8 @@ public class Dashboard {
         };
         driveTable = new JTable(driveTableModel);
         driveTable.setRowHeight(45); // Increased for multi-line support
-        driveTable.setShowVerticalLines(false);
-        driveTable.setIntercellSpacing(new Dimension(0, 0));
+        driveTable.setShowGrid(true);
+        driveTable.setGridColor(new Color(220, 220, 220));
         driveTable.setFillsViewportHeight(true);
         driveTable.setBackground(Color.WHITE);
 
@@ -355,8 +361,8 @@ public class Dashboard {
         };
         noticeTable = new JTable(noticeTableModel);
         noticeTable.setRowHeight(70); // Increased height to show multiple lines for big notices
-        noticeTable.setShowVerticalLines(false);
-        noticeTable.setIntercellSpacing(new Dimension(0, 0));
+        noticeTable.setShowGrid(true);
+        noticeTable.setGridColor(new Color(220, 220, 220));
         noticeTable.setFillsViewportHeight(true);
         noticeTable.setBackground(Color.WHITE);
 
@@ -450,30 +456,49 @@ public class Dashboard {
         lblTitle.setFont(new Font("Arial", Font.BOLD, 28));
         lblTitle.setForeground(new Color(44, 62, 80));
 
-        JLabel lblVersion = new JLabel("Version 1.0");
-        lblVersion.setFont(new Font("Arial", Font.PLAIN, 16));
-        lblVersion.setForeground(Color.GRAY);
+        JLabel lblDesc = new JLabel("<html><div style='text-align: center; width: 600px;'>"
+            + "A simple and easy-to-use platform to manage college placements. "
+            + "It brings students, companies, and the placement cell together in one place "
+            + "to easily track job drives, student details, and important notices."
+            + "</div></html>");
+        lblDesc.setFont(new Font("Arial", Font.PLAIN, 15));
+        lblDesc.setForeground(new Color(100, 100, 100));
 
-        JLabel lblDev = new JLabel("Developed by: Krishna Bansal");
+        JLabel lblFeatures = new JLabel("<html><center><b>Key Features:</b><br>"
+            + "\u2022 Student Profile Management &nbsp;&nbsp;&nbsp; \u2022 Company Drive Tracking<br>"
+            + "\u2022 Notice Board & Updates &nbsp;&nbsp;&nbsp; \u2022 Admin Dashboard</center></html>");
+        lblFeatures.setFont(new Font("Arial", Font.PLAIN, 14));
+        lblFeatures.setForeground(new Color(44, 62, 80));
+
+        JLabel lblDev = new JLabel("Developed by: Krishna Bansal (PIET25CS083)");
         lblDev.setFont(new Font("Arial", Font.BOLD, 20));
         lblDev.setForeground(new Color(41, 128, 185));
 
-        JLabel lblGuide = new JLabel("Guided by: Sikha Gautam");
+        JLabel lblGuide = new JLabel("Guided by: Sikha Gautam (Associate Professor)");
         lblGuide.setFont(new Font("Arial", Font.BOLD, 20));
         lblGuide.setForeground(new Color(39, 174, 96));
-
-        gbc.insets = new Insets(10, 10, 10, 10);
-        creditsPanel.add(lblTitle, gbc);
-        creditsPanel.add(lblVersion, gbc);
         
-        gbc.insets = new Insets(40, 10, 5, 10);
+        JLabel lblCopy = new JLabel("\u00A9 2026 Poornima Institute of Engineering & Technology. All rights reserved.");
+        lblCopy.setFont(new Font("Arial", Font.PLAIN, 12));
+        lblCopy.setForeground(Color.GRAY);
+
+        gbc.insets = new Insets(10, 10, 20, 10);
+        creditsPanel.add(lblTitle, gbc);
+        
+        gbc.insets = new Insets(0, 10, 20, 10);
+        creditsPanel.add(lblDesc, gbc);
+        
+        gbc.insets = new Insets(0, 10, 30, 10);
+        creditsPanel.add(lblFeatures, gbc);
+        
+        gbc.insets = new Insets(10, 10, 5, 10);
         creditsPanel.add(lblDev, gbc);
         
-        gbc.insets = new Insets(5, 10, 30, 10);
+        gbc.insets = new Insets(5, 10, 40, 10);
         creditsPanel.add(lblGuide, gbc);
         
-
-        
+        gbc.insets = new Insets(10, 10, 10, 10);
+        creditsPanel.add(lblCopy, gbc);        
         aboutPanel.add(creditsPanel, BorderLayout.CENTER);
 
         cardPanel.add(aboutPanel, "About");
@@ -537,82 +562,67 @@ public class Dashboard {
         pContentPanel.setOpaque(false);
         GridBagConstraints pgbc = new GridBagConstraints();
         pgbc.gridwidth = GridBagConstraints.REMAINDER;
-        pgbc.anchor = GridBagConstraints.CENTER;
-        
-        // Profile Info
-        JLabel lblProfileTitle = new JLabel("Training & Placement Officer");
-        lblProfileTitle.setFont(new Font("Arial", Font.BOLD, 26));
-        lblProfileTitle.setForeground(new Color(44, 62, 80));
-        
-        JLabel lblAdminName = new JLabel("Admin Profile");
-        lblAdminName.setFont(new Font("Arial", Font.PLAIN, 18));
-        lblAdminName.setForeground(Color.GRAY);
-        
-        JLabel lblEmail = new JLabel("Email: tpo@poornima.org");
-        lblEmail.setFont(new Font("Arial", Font.PLAIN, 16));
-        lblEmail.setForeground(Color.GRAY);
-        
-        pgbc.insets = new Insets(10, 10, 5, 10);
-        pContentPanel.add(lblProfileTitle, pgbc);
-        pgbc.insets = new Insets(0, 10, 5, 10);
-        pContentPanel.add(lblAdminName, pgbc);
-        pgbc.insets = new Insets(0, 10, 30, 10);
-        pContentPanel.add(lblEmail, pgbc);
-        
-        // Settings Card
-        JPanel settingsCard = new JPanel(new GridBagLayout());
-        settingsCard.setBackground(Color.WHITE);
-        settingsCard.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(220, 220, 220)),
-            BorderFactory.createEmptyBorder(20, 40, 20, 40)
-        ));
-        
-        GridBagConstraints sGbc = new GridBagConstraints();
-        sGbc.fill = GridBagConstraints.HORIZONTAL;
-        sGbc.insets = new Insets(10, 10, 10, 10);
-        
-        JLabel lblSettings = new JLabel("Change Password");
-        lblSettings.setFont(new Font("Arial", Font.BOLD, 18));
-        lblSettings.setForeground(new Color(41, 128, 185));
-        
-        sGbc.gridx = 0; sGbc.gridy = 0; sGbc.gridwidth = 2;
-        settingsCard.add(lblSettings, sGbc);
-        
-        sGbc.gridwidth = 1; sGbc.gridy = 1;
-        settingsCard.add(new JLabel("Current Password:"), sGbc);
-        sGbc.gridx = 1;
-        JPasswordField txtCurrPwd = new JPasswordField(15);
-        settingsCard.add(txtCurrPwd, sGbc);
-        
-        sGbc.gridx = 0; sGbc.gridy = 2;
-        settingsCard.add(new JLabel("New Password:"), sGbc);
-        sGbc.gridx = 1;
-        JPasswordField txtNewPwd = new JPasswordField(15);
-        settingsCard.add(txtNewPwd, sGbc);
-        
-        sGbc.gridx = 0; sGbc.gridy = 3;
-        settingsCard.add(new JLabel("Confirm Password:"), sGbc);
-        sGbc.gridx = 1;
-        JPasswordField txtConfPwd = new JPasswordField(15);
-        settingsCard.add(txtConfPwd, sGbc);
-        
-        sGbc.gridx = 0; sGbc.gridy = 4; sGbc.gridwidth = 2;
-        RoundedButton btnSavePwd = new RoundedButton("Save Changes", 15);
-        btnSavePwd.setBackground(new Color(39, 174, 96));
-        btnSavePwd.setForeground(Color.WHITE);
-        btnSavePwd.setPreferredSize(new Dimension(150, 35));
-        btnSavePwd.addActionListener(ev -> {
-            JOptionPane.showMessageDialog(dashFrame, "Password updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-            txtCurrPwd.setText(""); txtNewPwd.setText(""); txtConfPwd.setText("");
-        });
-        settingsCard.add(btnSavePwd, sGbc);
-        
-        pgbc.insets = new Insets(10, 10, 30, 10);
-        pContentPanel.add(settingsCard, pgbc);
-        
+        pgbc.fill = GridBagConstraints.HORIZONTAL;
+        pgbc.insets = new Insets(10, 20, 10, 20);
 
+        // --- Info Card (Rounded) ---
+        RoundedPanel infoCard = new RoundedPanel(20, Color.WHITE);
+        infoCard.setLayout(new GridLayout(3, 1, 5, 10));
+        infoCard.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+        
+        JLabel lblProfileTitle = new JLabel("Training & Placement Officer Profile");
+        lblProfileTitle.setFont(new Font("Arial", Font.BOLD, 24));
+        lblProfileTitle.setForeground(new Color(44, 62, 80));
+        lblProfileTitle.setHorizontalAlignment(JLabel.CENTER);
+        
+        infoCard.add(lblProfileTitle);
+        infoCard.add(createProfileRow("Email:", "college@poornima.org"));
+        infoCard.add(createProfileRow("Password:", "********"));
+        
+        pgbc.insets = new Insets(20, 20, 20, 20);
+        pContentPanel.add(infoCard, pgbc);
+        
+        // --- Stats Card ---
+        JPanel statsCard = new JPanel(new GridLayout(1, 3, 20, 0));
+        statsCard.setOpaque(false);
+        
+        lblProfileTotalStudents = new JLabel(String.valueOf(studentTableModel.getRowCount()));
+        lblProfileTotalCompanies = new JLabel(String.valueOf(driveTableModel.getRowCount()));
+        lblProfileTotalNotices = new JLabel(String.valueOf(noticeTableModel.getRowCount()));
+        
+        statsCard.add(createStatBox("Total Students", lblProfileTotalStudents));
+        statsCard.add(createStatBox("Companies Visited", lblProfileTotalCompanies));
+        statsCard.add(createStatBox("Active Notices", lblProfileTotalNotices));
+        
+        pgbc.insets = new Insets(0, 20, 30, 20);
+        pContentPanel.add(statsCard, pgbc);
+        
+        // --- Actions Card ---
+        JPanel actionCard = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        actionCard.setOpaque(false);
+        
+        RoundedButton btnChangePwd = new RoundedButton("Change Password", 20);
+        btnChangePwd.setBackground(new Color(41, 128, 185));
+        btnChangePwd.setForeground(Color.WHITE);
+        btnChangePwd.setPreferredSize(new Dimension(160, 40));
+        btnChangePwd.setFont(new Font("Arial", Font.BOLD, 14));
+        btnChangePwd.addActionListener(e -> showChangePasswordDialog());
+        
+        actionCard.add(btnChangePwd);
+        
+        pgbc.insets = new Insets(0, 20, 20, 20);
+        pContentPanel.add(actionCard, pgbc);
         
         profilePanel.add(pContentPanel, BorderLayout.CENTER);
+        
+        JLabel lblProfileCopy = new JLabel("\u00A9 2026 Poornima Institute of Engineering & Technology. All rights reserved.");
+        lblProfileCopy.setFont(new Font("Arial", Font.PLAIN, 12));
+        lblProfileCopy.setForeground(Color.GRAY);
+        lblProfileCopy.setHorizontalAlignment(JLabel.CENTER);
+        lblProfileCopy.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
+        
+        profilePanel.add(lblProfileCopy, BorderLayout.SOUTH);
+        
         cardPanel.add(profilePanel, "Profile");
 
         dashFrame.add(cardPanel, BorderLayout.CENTER);
@@ -1082,8 +1092,147 @@ public class Dashboard {
     }
 
     // Main method for testing directly
+    // Main method for testing directly
     public static void main(String[] args) {
         new Dashboard();
+    }
+    
+    private JPanel createProfileRow(String label, String value) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setOpaque(false);
+        JLabel lblLabel = new JLabel(label);
+        lblLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        lblLabel.setForeground(new Color(44, 62, 80));
+        lblLabel.setPreferredSize(new Dimension(100, 20));
+        
+        JLabel lblValue = new JLabel(value);
+        lblValue.setFont(new Font("Arial", Font.PLAIN, 15));
+        lblValue.setForeground(Color.GRAY);
+        
+        panel.add(lblLabel, BorderLayout.WEST);
+        panel.add(lblValue, BorderLayout.CENTER);
+        return panel;
+    }
+    
+    private JPanel createStatBox(String title, JLabel lblCount) {
+        RoundedPanel panel = new RoundedPanel(20, Color.WHITE);
+        panel.setLayout(new GridLayout(2, 1));
+        panel.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
+        
+        lblCount.setHorizontalAlignment(JLabel.CENTER);
+        lblCount.setFont(new Font("Arial", Font.BOLD, 24));
+        lblCount.setForeground(new Color(41, 128, 185));
+        
+        JLabel lblTitle = new JLabel(title, JLabel.CENTER);
+        lblTitle.setFont(new Font("Arial", Font.PLAIN, 14));
+        lblTitle.setForeground(Color.GRAY);
+        
+        panel.add(lblCount);
+        panel.add(lblTitle);
+        return panel;
+    }
+
+    private JPanel createPasswordPanel(JPasswordField pwdField) {
+        JPanel panel = new JPanel(new BorderLayout(5, 0));
+        panel.setOpaque(false);
+        panel.add(pwdField, BorderLayout.CENTER);
+        
+        JToggleButton btnToggle = new JToggleButton("\uD83D\uDC41"); // Eye emoji
+        btnToggle.setMargin(new Insets(0, 5, 0, 5));
+        btnToggle.setFocusPainted(false);
+        btnToggle.setBorderPainted(false);
+        btnToggle.setContentAreaFilled(false);
+        btnToggle.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        char defaultEcho = pwdField.getEchoChar();
+        btnToggle.addActionListener(e -> {
+            if (btnToggle.isSelected()) {
+                pwdField.setEchoChar((char) 0);
+                btnToggle.setText("\u2716"); // Cross symbol
+            } else {
+                pwdField.setEchoChar(defaultEcho);
+                btnToggle.setText("\uD83D\uDC41"); // Eye emoji
+            }
+        });
+        
+        panel.add(btnToggle, BorderLayout.EAST);
+        return panel;
+    }
+
+    private void showChangePasswordDialog() {
+        JDialog dialog = new JDialog(dashFrame, "Change Password", true);
+        dialog.setSize(400, 300);
+        dialog.setLocationRelativeTo(dashFrame);
+        dialog.setLayout(new BorderLayout());
+        
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 10, 10, 10);
+        
+        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.weightx = 0.0;
+        panel.add(new JLabel("Current Password:"), gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        JPasswordField txtCurr = new RoundedPasswordField(15);
+        panel.add(createPasswordPanel(txtCurr), gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.weightx = 0.0;
+        panel.add(new JLabel("New Password:"), gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        JPasswordField txtNew = new RoundedPasswordField(15);
+        panel.add(createPasswordPanel(txtNew), gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.weightx = 0.0;
+        panel.add(new JLabel("Confirm Password:"), gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        JPasswordField txtConf = new RoundedPasswordField(15);
+        panel.add(createPasswordPanel(txtConf), gbc);
+        
+        dialog.add(panel, BorderLayout.CENTER);
+        
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        RoundedButton btnSave = new RoundedButton("Update", 15);
+        btnSave.setBackground(new Color(39, 174, 96));
+        btnSave.setForeground(Color.WHITE);
+        btnSave.addActionListener(e -> {
+            String curr = new String(txtCurr.getPassword());
+            String newP = new String(txtNew.getPassword());
+            String confP = new String(txtConf.getPassword());
+            
+            if (curr.isEmpty() || newP.isEmpty() || confP.isEmpty()) {
+                JOptionPane.showMessageDialog(dialog, "Please fill all fields!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!curr.equals(frame.getPassword())) {
+                JOptionPane.showMessageDialog(dialog, "Current password is incorrect!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!newP.equals(confP)) {
+                JOptionPane.showMessageDialog(dialog, "New password and Confirm password do not match!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            frame.updatePassword(newP);
+            JOptionPane.showMessageDialog(dialog, "Password updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            dialog.dispose();
+        });
+        
+        RoundedButton btnCancel = new RoundedButton("Cancel", 15);
+        btnCancel.addActionListener(e -> dialog.dispose());
+        
+        bottom.add(btnSave);
+        bottom.add(btnCancel);
+        dialog.add(bottom, BorderLayout.SOUTH);
+        
+        dialog.getRootPane().setDefaultButton(btnSave);
+        dialog.setVisible(true);
     }
 }
 
@@ -1184,32 +1333,51 @@ class ActionEditor extends DefaultCellEditor {
 }
 
 // Custom Renderer for Multi-line Text in JTable
-class TextAreaRenderer extends JTextArea implements javax.swing.table.TableCellRenderer {
+class TextAreaRenderer extends JPanel implements javax.swing.table.TableCellRenderer {
+    private JTextArea textArea;
+
     public TextAreaRenderer() {
-        setLineWrap(true);
-        setWrapStyleWord(true);
+        setLayout(new GridBagLayout());
         setOpaque(true);
-        setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        setFont(new Font("Arial", Font.PLAIN, 13));
+        
+        textArea = new JTextArea();
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setOpaque(false);
+        textArea.setFont(new Font("Arial", Font.PLAIN, 13));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        add(textArea, gbc);
     }
     
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         if (isSelected) {
             setBackground(table.getSelectionBackground());
-            setForeground(table.getSelectionForeground());
+            textArea.setForeground(table.getSelectionForeground());
         } else {
             setBackground(Color.WHITE);
-            setForeground(new Color(44, 62, 80));
+            textArea.setForeground(new Color(44, 62, 80));
         }
         
-        setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 0, 1, 0, table.getGridColor()), // Bottom line
-            BorderFactory.createEmptyBorder(5, 10, 5, 10) // Inner padding
-        ));
+        String text = value != null ? value.toString() : "";
+        textArea.setText(text);
         
-        setText(value != null ? value.toString() : "");
-        setToolTipText(getText()); // Show full text on hover
+        // Calculate horizontal padding to center short text
+        int colWidth = table.getColumnModel().getColumn(column).getWidth();
+        FontMetrics fm = textArea.getFontMetrics(textArea.getFont());
+        int textWidth = fm.stringWidth(text);
+        
+        int padX = 10;
+        if (textWidth > 0 && textWidth < (colWidth - 20)) {
+            padX = (colWidth - textWidth) / 2;
+        }
+        
+        setBorder(BorderFactory.createEmptyBorder(2, padX, 2, 10));
+        
+        setToolTipText(text);
         return this;
     }
 }
@@ -1284,9 +1452,9 @@ class RoundedTextField extends JTextField {
 // Custom Rounded Password Field
 class RoundedPasswordField extends JPasswordField {
     private int radius;
-    public RoundedPasswordField(int radius) {
-        super();
-        this.radius = radius;
+    public RoundedPasswordField(int columns) {
+        super(columns);
+        this.radius = 15;
         setOpaque(false);
         setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
     }
@@ -1305,6 +1473,32 @@ class RoundedPasswordField extends JPasswordField {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(new Color(200, 200, 200));
         g2.drawRoundRect(1, 1, getWidth() - 3, getHeight() - 3, radius, radius);
+        g2.dispose();
+    }
+}
+
+// Custom Rounded Panel Class
+class RoundedPanel extends JPanel {
+    private int radius;
+    private Color backgroundColor;
+
+    public RoundedPanel(int radius, Color bgColor) {
+        super();
+        this.radius = radius;
+        this.backgroundColor = bgColor;
+        setOpaque(false);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(backgroundColor);
+        g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+        
+        g2.setColor(new Color(220, 220, 220));
+        g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
         g2.dispose();
     }
 }
