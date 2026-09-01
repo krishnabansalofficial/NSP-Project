@@ -162,9 +162,13 @@ public class frame {
             if (emailVal.isEmpty() || passVal.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "Please enter Email and Password!", "Login Alert", JOptionPane.WARNING_MESSAGE);
             } else if (emailVal.equals("college@poornima.org") && passVal.equals(getPassword())) {
-                // Bina kisi delay/popup ke direct Dashboard open hoga
-                new Dashboard();
+                // Bina kisi delay/popup ke direct Dashboard open hoga (Admin)
+                new Dashboard(true);
                 frame.dispose(); // Purana frame close
+            } else if (emailVal.equals("krishna@poornima.org") && passVal.equals("Krishna@01")) {
+                // Student Login (View-Only mode)
+                new Dashboard(false);
+                frame.dispose();
             } else {
                 JOptionPane.showMessageDialog(frame, "Invalid Email or Password!", "Login Failed", JOptionPane.ERROR_MESSAGE);
             }

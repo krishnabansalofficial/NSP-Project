@@ -14,6 +14,7 @@ import java.util.Date;
 // Yeh page login ke baad open hota hai
 // =========================================================================
 public class Dashboard {
+    private boolean isAdmin;
 
     private JFrame dashFrame;
     private JPanel cardPanel;
@@ -32,7 +33,8 @@ public class Dashboard {
     private int noticeCount = 0;
     private int placedCount = 0;
 
-    public Dashboard() {
+    public Dashboard(boolean isAdmin) {
+        this.isAdmin = isAdmin;
         initDashboard();
     }
 
@@ -76,6 +78,7 @@ public class Dashboard {
         JButton btnPlacements = createNavButton("Placements");
         JButton btnNotice = createNavButton("Notice");
         JButton btnAbout = createNavButton("About");
+        btnAbout.setVisible(!isAdmin);
         JButton btnProfile = createNavButton("Profile");
 
         // Helper function (local) to set active border
@@ -212,6 +215,7 @@ public class Dashboard {
         btnAddStudent.setPreferredSize(new Dimension(150, 35));
         btnAddStudent.addActionListener(e -> showStudentForm(-1));
 
+        btnAddStudent.setVisible(isAdmin);
         actionPanel.add(btnAddStudent);
         
         studentHeader.add(actionPanel, BorderLayout.EAST);
@@ -291,6 +295,7 @@ public class Dashboard {
         btnAddCompany.setPreferredSize(new Dimension(180, 35));
         btnAddCompany.addActionListener(e -> showCompanyForm(-1));
 
+        btnAddCompany.setVisible(isAdmin);
         driveActionPanel.add(btnAddCompany);
         
         driveHeader.add(driveActionPanel, BorderLayout.EAST);
@@ -355,6 +360,7 @@ public class Dashboard {
         JButton btnAddNotice = createActionButton("+ Add Notice", new Color(230, 126, 34)); // Orange button
         btnAddNotice.setPreferredSize(new Dimension(150, 35));
         btnAddNotice.addActionListener(e -> showNoticeForm(-1));
+        btnAddNotice.setVisible(isAdmin);
         noticeActionPanel.add(btnAddNotice);
         noticeHeader.add(noticeActionPanel, BorderLayout.EAST);
 
@@ -477,17 +483,17 @@ public class Dashboard {
         lblFeatures.setFont(new Font("Arial", Font.PLAIN, 14));
         lblFeatures.setForeground(new Color(44, 62, 80));
 
-        JLabel lblDev = new JLabel("Developed by: Krishna Bansal (PIET25CS083)");
+        JLabel lblDev = new JLabel("<html><font color='#2C3E50'>Developed by:</font> <font color='#2980B9'>Krishna Bansal (PIET25CS083)</font></html>");
         lblDev.setFont(new Font("Arial", Font.BOLD, 20));
-        lblDev.setForeground(new Color(41, 128, 185));
 
-        JLabel lblGuide = new JLabel("Guided by: Sikha Gautam (Associate Professor)");
+        JLabel lblGuide = new JLabel("<html><font color='#2C3E50'>Guided by:</font> <font color='#27AE60'>Sikha Gautam (Associate Professor)</font></html>");
         lblGuide.setFont(new Font("Arial", Font.BOLD, 20));
-        lblGuide.setForeground(new Color(39, 174, 96));
         
         JLabel lblCopy = new JLabel("\u00A9 2026 Poornima Institute of Engineering & Technology. All rights reserved.");
         lblCopy.setFont(new Font("Arial", Font.PLAIN, 12));
         lblCopy.setForeground(Color.GRAY);
+        lblCopy.setHorizontalAlignment(JLabel.CENTER);
+        lblCopy.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
 
         gbc.insets = new Insets(10, 10, 20, 10);
         creditsPanel.add(lblTitle, gbc);
@@ -504,9 +510,8 @@ public class Dashboard {
         gbc.insets = new Insets(5, 10, 40, 10);
         creditsPanel.add(lblGuide, gbc);
         
-        gbc.insets = new Insets(10, 10, 10, 10);
-        creditsPanel.add(lblCopy, gbc);        
         aboutPanel.add(creditsPanel, BorderLayout.CENTER);
+        aboutPanel.add(lblCopy, BorderLayout.SOUTH);
 
         cardPanel.add(aboutPanel, "About");
 
@@ -572,21 +577,23 @@ public class Dashboard {
         pgbc.fill = GridBagConstraints.HORIZONTAL;
         pgbc.insets = new Insets(10, 20, 10, 20);
 
-        // --- Info Card (Rounded) ---
-        RoundedPanel infoCard = new RoundedPanel(20, Color.WHITE);
-        infoCard.setLayout(new GridLayout(3, 1, 5, 10));
-        infoCard.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
-        
-        JLabel lblProfileTitle = new JLabel("Training & Placement Officer Profile");
+        JLabel lblProfileTitle = new JLabel(isAdmin ? "Training & Placement Officer Profile" : "B.Tech Computer Science Student");
         lblProfileTitle.setFont(new Font("Arial", Font.BOLD, 24));
         lblProfileTitle.setForeground(new Color(44, 62, 80));
         lblProfileTitle.setHorizontalAlignment(JLabel.CENTER);
         
-        infoCard.add(lblProfileTitle);
-        infoCard.add(createProfileRow("Email:", "college@poornima.org"));
+        pgbc.insets = new Insets(0, 20, 15, 20);
+        pContentPanel.add(lblProfileTitle, pgbc);
+
+        // --- Info Card (Rounded) ---
+        RoundedPanel infoCard = new RoundedPanel(20, Color.WHITE);
+        infoCard.setLayout(new GridLayout(2, 1, 5, 10));
+        infoCard.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+        
+        infoCard.add(createProfileRow("Email:", isAdmin ? "college@poornima.org" : "krishna@poornima.org"));
         infoCard.add(createProfileRow("Password:", "********"));
         
-        pgbc.insets = new Insets(20, 20, 20, 20);
+        pgbc.insets = new Insets(0, 20, 20, 20);
         pContentPanel.add(infoCard, pgbc);
         
         // --- Stats Card ---
@@ -601,8 +608,10 @@ public class Dashboard {
         statsCard.add(createStatBox("Companies Visited", lblProfileTotalCompanies));
         statsCard.add(createStatBox("Active Notices", lblProfileTotalNotices));
         
-        pgbc.insets = new Insets(0, 20, 30, 20);
-        pContentPanel.add(statsCard, pgbc);
+        if (isAdmin) {
+            pgbc.insets = new Insets(0, 20, 30, 20);
+            pContentPanel.add(statsCard, pgbc);
+        }
         
         // --- Actions Card ---
         JPanel actionCard = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
@@ -615,6 +624,7 @@ public class Dashboard {
         btnChangePwd.setFont(new Font("Arial", Font.BOLD, 14));
         btnChangePwd.addActionListener(e -> showChangePasswordDialog());
         
+        btnChangePwd.setVisible(isAdmin);
         actionCard.add(btnChangePwd);
         
         pgbc.insets = new Insets(0, 20, 20, 20);
@@ -635,7 +645,14 @@ public class Dashboard {
         dashFrame.add(cardPanel, BorderLayout.CENTER);
 
 
+        
+        if (!isAdmin) {
+            studentTable.removeColumn(studentTable.getColumnModel().getColumn(5));
+            driveTable.removeColumn(driveTable.getColumnModel().getColumn(7));
+            noticeTable.removeColumn(noticeTable.getColumnModel().getColumn(3));
+        }
         // Frame Visible
+
         dashFrame.setVisible(true);
     }
 
@@ -1143,7 +1160,7 @@ public class Dashboard {
     }
 
     public static void main(String[] args) {
-        new Dashboard();
+        new Dashboard(true);
     }
     
     private JPanel createProfileRow(String label, String value) {
@@ -1540,14 +1557,10 @@ class RoundedPanel extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(backgroundColor);
         g2.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
-        
-        g2.setColor(new Color(220, 220, 220));
-        g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
         g2.dispose();
     }
 }
