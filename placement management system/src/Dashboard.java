@@ -775,6 +775,7 @@ public class Dashboard {
             studentTableModel.removeRow(row);
             studentCount--;
             lblTotalStudents.setText(String.valueOf(studentCount));
+            saveTableData(studentTableModel, "students_data.txt");
         }
         studentTable.clearSelection();
     }
@@ -785,6 +786,7 @@ public class Dashboard {
             driveTableModel.removeRow(row);
             companyCount--;
             lblTotalCompanies.setText(String.valueOf(companyCount));
+            saveTableData(driveTableModel, "companies_data.txt");
         }
         driveTable.clearSelection();
     }
@@ -997,6 +999,7 @@ public class Dashboard {
                     driveId, comp, role, pkgStr + " LPA", 
                     cgpaStr, dateStr, "Upcoming", ""
                 });
+                saveTableData(driveTableModel, "companies_data.txt");
                 JOptionPane.showMessageDialog(dialog, "Drive has been successfully added!");
             } else {
                 driveTableModel.setValueAt(comp, editRow, 1);
@@ -1004,6 +1007,7 @@ public class Dashboard {
                 driveTableModel.setValueAt(pkgStr + " LPA", editRow, 3);
                 driveTableModel.setValueAt(cgpaStr, editRow, 4);
                 driveTableModel.setValueAt(dateStr, editRow, 5);
+                saveTableData(driveTableModel, "companies_data.txt");
                 JOptionPane.showMessageDialog(dialog, "Drive has been successfully updated!");
             }
             driveTable.clearSelection();
@@ -1083,6 +1087,7 @@ public class Dashboard {
                 noticeCount++;
                 String noticeId = "N-" + (100 + noticeCount);
                 noticeTableModel.addRow(new Object[]{ noticeId, dateStr, detailsStr, "" });
+                saveTableData(noticeTableModel, "notices_data.txt");
                 JOptionPane.showMessageDialog(dialog, "Notice added successfully!");
             } else {
                 noticeTableModel.setValueAt(dateStr, editRow, 1);
