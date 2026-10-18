@@ -50,7 +50,10 @@ public class frame {
 
 
         try {
-            Connection con = DriverManager.getConnection(url, user, dbPassword);}
+            Connection con = DriverManager.getConnection(url, user, dbPassword);
+            PreparedStatement ps = con.prepareStatement(sql)
+                    String =
+        }
 
         catch (SQLException e) {
             e.printStackTrace();
