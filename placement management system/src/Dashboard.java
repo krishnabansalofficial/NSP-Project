@@ -226,8 +226,9 @@ public class Dashboard {
         studentTableModel = new DefaultTableModel(null, studentCols) {
             @Override public boolean isCellEditable(int row, int col) { return col == 5; }
         };
-        loadTableData(studentTableModel, "students_data.txt");
+        SelectData.loadStudents(studentTableModel);
         studentCount = studentTableModel.getRowCount();
+        if (lblTotalStudents != null) lblTotalStudents.setText(String.valueOf(studentCount));
         studentTable = new JTable(studentTableModel);
         studentTable.setRowHeight(45);
         studentTable.setShowGrid(true);
@@ -306,8 +307,9 @@ public class Dashboard {
         driveTableModel = new DefaultTableModel(null, driveColumns) {
             @Override public boolean isCellEditable(int r, int c) { return c == 7; }
         };
-        loadTableData(driveTableModel, "companies_data.txt");
+        SelectData.loadCompanies(driveTableModel);
         companyCount = driveTableModel.getRowCount();
+        if (lblTotalCompanies != null) lblTotalCompanies.setText(String.valueOf(companyCount));
         driveTable = new JTable(driveTableModel);
         driveTable.setRowHeight(45);
         driveTable.setShowGrid(true);
@@ -370,7 +372,7 @@ public class Dashboard {
         noticeTableModel = new DefaultTableModel(null, noticeCols) {
             @Override public boolean isCellEditable(int row, int col) { return col == 3; }
         };
-        loadTableData(noticeTableModel, "notices_data.txt");
+        SelectData.loadNotices(noticeTableModel);
         noticeCount = noticeTableModel.getRowCount();
         noticeTable = new JTable(noticeTableModel);
         noticeTable.setRowHeight(70);
@@ -772,10 +774,11 @@ public class Dashboard {
     void deleteStudent(int row) {
         int choice = JOptionPane.showConfirmDialog(dashFrame, "Are you sure you want to delete this student?", "Delete Confirm", JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
+            String roll = studentTableModel.getValueAt(row, 0).toString();
+            DeleteData.deleteStudent(roll);
             studentTableModel.removeRow(row);
             studentCount--;
             lblTotalStudents.setText(String.valueOf(studentCount));
-            saveTableData(studentTableModel, "students_data.txt");
         }
         studentTable.clearSelection();
     }
@@ -783,10 +786,11 @@ public class Dashboard {
     void deleteCompany(int row) {
         int choice = JOptionPane.showConfirmDialog(dashFrame, "Are you sure you want to delete this company drive?", "Delete Confirm", JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
+            String driveId = driveTableModel.getValueAt(row, 0).toString();
+            DeleteData.deleteCompany(driveId);
             driveTableModel.removeRow(row);
             companyCount--;
             lblTotalCompanies.setText(String.valueOf(companyCount));
-            saveTableData(driveTableModel, "companies_data.txt");
         }
         driveTable.clearSelection();
     }
@@ -871,18 +875,19 @@ public class Dashboard {
                 studentCount++;
                 lblTotalStudents.setText(String.valueOf(studentCount));
 
+                String branchStr = cbBranch.getSelectedItem().toString();
                 studentTableModel.addRow(new Object[]{
-                    roll, name, cbBranch.getSelectedItem().toString(),
+                    roll, name, branchStr,
                     cgpaStr, "Applied", ""
                 });
-                saveTableData(studentTableModel, "students_data.txt");
+                InsertData.insertStudent(roll, name, branchStr, cgpaStr, "Applied");
                 JOptionPane.showMessageDialog(dialog, "Student '" + name + "' has been successfully added!");
             } else {
                 studentTableModel.setValueAt(roll, editRow, 0);
                 studentTableModel.setValueAt(name, editRow, 1);
                 studentTableModel.setValueAt(cbBranch.getSelectedItem().toString(), editRow, 2);
                 studentTableModel.setValueAt(cgpaStr, editRow, 3);
-                saveTableData(studentTableModel, "students_data.txt");
+                UpdateData.updateStudent(roll, name, cbBranch.getSelectedItem().toString(), cgpaStr);
                 JOptionPane.showMessageDialog(dialog, "Student '" + name + "' has been successfully updated!");
             }
             studentTable.clearSelection();
@@ -999,15 +1004,16 @@ public class Dashboard {
                     driveId, comp, role, pkgStr + " LPA",
                     cgpaStr, dateStr, "Upcoming", ""
                 });
-                saveTableData(driveTableModel, "companies_data.txt");
+                InsertData.insertCompany(driveId, comp, role, pkgStr + " LPA", cgpaStr, dateStr, "Upcoming");
                 JOptionPane.showMessageDialog(dialog, "Drive has been successfully added!");
             } else {
+                String driveId = driveTableModel.getValueAt(editRow, 0).toString();
                 driveTableModel.setValueAt(comp, editRow, 1);
                 driveTableModel.setValueAt(role, editRow, 2);
                 driveTableModel.setValueAt(pkgStr + " LPA", editRow, 3);
                 driveTableModel.setValueAt(cgpaStr, editRow, 4);
                 driveTableModel.setValueAt(dateStr, editRow, 5);
-                saveTableData(driveTableModel, "companies_data.txt");
+                UpdateData.updateCompany(driveId, comp, role, pkgStr + " LPA", cgpaStr, dateStr);
                 JOptionPane.showMessageDialog(dialog, "Drive has been successfully updated!");
             }
             driveTable.clearSelection();
@@ -1087,12 +1093,13 @@ public class Dashboard {
                 noticeCount++;
                 String noticeId = "N-" + (100 + noticeCount);
                 noticeTableModel.addRow(new Object[]{ noticeId, dateStr, detailsStr, "" });
-                saveTableData(noticeTableModel, "notices_data.txt");
+                InsertData.insertNotice(noticeId, dateStr, detailsStr);
                 JOptionPane.showMessageDialog(dialog, "Notice added successfully!");
             } else {
+                String noticeId = noticeTableModel.getValueAt(editRow, 0).toString();
                 noticeTableModel.setValueAt(dateStr, editRow, 1);
                 noticeTableModel.setValueAt(detailsStr, editRow, 2);
-                saveTableData(noticeTableModel, "notices_data.txt");
+                UpdateData.updateNotice(noticeId, dateStr, detailsStr);
                 JOptionPane.showMessageDialog(dialog, "Notice updated successfully!");
             }
             noticeTable.clearSelection();
@@ -1118,51 +1125,15 @@ public class Dashboard {
         String noticeId = noticeTableModel.getValueAt(row, 0).toString();
         int choice = JOptionPane.showConfirmDialog(dashFrame, "Are you sure you want to delete notice " + noticeId + "?", "Delete Confirm", JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
+            DeleteData.deleteNotice(noticeId);
             noticeTableModel.removeRow(row);
-            saveTableData(noticeTableModel, "notices_data.txt");
             JOptionPane.showMessageDialog(dashFrame, "Notice deleted successfully!");
         }
     }
 
 
 
-    private void saveTableData(DefaultTableModel model, String filename) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
-            for (int i = 0; i < model.getRowCount(); i++) {
-                StringBuilder rowStr = new StringBuilder();
-                for (int j = 0; j < model.getColumnCount() - 1; j++) {
-                    rowStr.append(model.getValueAt(i, j).toString());
-                    if (j < model.getColumnCount() - 2) {
-                        rowStr.append("||");
-                    }
-                }
-                bw.write(rowStr.toString());
-                bw.newLine();
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
 
-    private void loadTableData(DefaultTableModel model, String filename) {
-        File file = new File(filename);
-        if (!file.exists()) return;
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.trim().isEmpty()) continue;
-                String[] data = line.split("\\|\\|");
-                Object[] rowData = new Object[model.getColumnCount()];
-                for (int i = 0; i < data.length; i++) {
-                    rowData[i] = data[i];
-                }
-                rowData[model.getColumnCount() - 1] = "";
-                model.addRow(rowData);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
 
     public static void main(String[] args) {
         new Dashboard(true);
@@ -1281,7 +1252,10 @@ public class Dashboard {
                 JOptionPane.showMessageDialog(dialog, "Please fill all fields!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (!curr.equals(frame.getPassword())) {
+            String userEmail = isAdmin ? "college@poornima.org" : "krishna@poornima.org";
+            String currentDbPwd = SelectData.getUserPassword(userEmail);
+
+            if (currentDbPwd != null && !curr.equals(currentDbPwd)) {
                 JOptionPane.showMessageDialog(dialog, "Current password is incorrect!", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -1290,8 +1264,12 @@ public class Dashboard {
                 return;
             }
 
-            frame.updatePassword(newP);
-            JOptionPane.showMessageDialog(dialog, "Password updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            boolean updated = UpdateData.updateUserPassword(userEmail, newP);
+            if (updated) {
+                JOptionPane.showMessageDialog(dialog, "Password updated successfully in Database!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(dialog, "Failed to update password in Database!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
             dialog.dispose();
         });
 

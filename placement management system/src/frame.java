@@ -10,55 +10,19 @@ public class frame {
 
 
 
-    private static final String PWD_FILE = "admin_pwd.txt";
-
     public static String getPassword() {
-        try {
-            File f = new File(PWD_FILE);
-            if (f.exists()) {
-                BufferedReader br = new BufferedReader(new FileReader(f));
-                String pwd = br.readLine();
-                br.close();
-                if (pwd != null && !pwd.trim().isEmpty()) {
-                    return pwd.trim();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        String dbPwd = SelectData.getAdminPassword();
+        if (dbPwd != null && !dbPwd.trim().isEmpty()) {
+            return dbPwd.trim();
         }
         return "admin";
-
     }
 
     public static void updatePassword(String newPwd) {
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(PWD_FILE));
-            bw.write(newPwd);
-            bw.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        UpdateData.updateAdminPassword(newPwd);
     }
 
     public static void main(String[] args) {
-        String url = "jdbc:mysql://localhost:3306/krishna";
-        String user = "root";
-        String dbPassword = "Krishna@01Mysql";
-
-        String sql = "INSERT INTO student(name, password) VALUES (?, ?)";
-
-
-
-        try {
-            Connection con = DriverManager.getConnection(url, user, dbPassword);
-            PreparedStatement ps = con.prepareStatement(sql)
-                    String =
-        }
-
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-
         JFrame frame = new JFrame("Placement Management System");
         frame.setSize(1200, 700);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -179,12 +143,14 @@ public class frame {
 
             if (emailVal.isEmpty() || passVal.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "Please enter Email and Password!", "Login Alert", JOptionPane.WARNING_MESSAGE);
-            } else if (emailVal.equals("college@poornima.org") && passVal.equals(getPassword())) {
-                new Dashboard(true);
-                frame.dispose();
+                return;
+            }
 
-            } else if (emailVal.equals("krishna@poornima.org") && passVal.equals("Krishna@01")) {
-                new Dashboard(false);
+            // Authenticate purely with MySQL Database
+            String role = SelectData.checkLogin(emailVal, passVal);
+            if (role != null) {
+                boolean isAdmin = "ADMIN".equalsIgnoreCase(role);
+                new Dashboard(isAdmin);
                 frame.dispose();
             } else {
                 JOptionPane.showMessageDialog(frame, "Invalid Email or Password!", "Login Failed", JOptionPane.ERROR_MESSAGE);
